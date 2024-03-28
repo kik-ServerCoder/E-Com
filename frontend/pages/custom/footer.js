@@ -19,15 +19,15 @@ const Footer = () => {
 
       <div>
        
-        <button
+        {/* <button
           onClick={() => router.back()}
           className="text-white ml-4 cursor-pointer bg-sky-600 hover:bg-gray-600 py-2 px-4 rounded"
         >
           Go Back
-        </button>
+        </button> */}
             
             <Link href="/">
-              <b className="text-gray-300 ml-4 cursor-pointer bg-sky-600 hover:bg-gray-600 py-2 px-4 rounded">Home</b>
+              <b className="text-gray-300 ml-4 cursor-pointer bg-gray-600 hover:bg-gray-800 py-2 px-4 rounded">Home</b>
             </Link>
           
      
