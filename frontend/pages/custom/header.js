@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
-const Header = ({ cartItems }) => {
+const Header = ({ cartItems, updateCartItem, updateCartState }) => {
   const [showCart, setShowCart] = useState(false);
   const cartRef = useRef(null);
 
@@ -18,6 +18,25 @@ const Header = ({ cartItems }) => {
     };
   }, []);
 
+  const updatedPrice = (item) => {
+    return item.units * item.price;
+  };
+
+  const handleQuantityChange = (item, quantity) => {
+    updateCartItem(item, quantity);
+  };
+
+  const handleDeleteItem = (item) => {
+    const updatedCartItems = cartItems.filter(cartItem => cartItem.id !== item.id);
+    updateCartState(updatedCartItems); // Update cart state in Product component
+  };
+
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + updatedPrice(item), 0);
+  };
+  const checking = () => {
+    return alert('success');
+  }
   return (
     <header
       data-theme="nord"
@@ -25,44 +44,78 @@ const Header = ({ cartItems }) => {
     >
       <div className="flex items-center">
         <img src="logo.png" alt="Company Logo" className="w-10 h-8 mr-2 bg-sky-400" />
-        <span className="text-xl font-bold">E-Commerce Project <span className="text-red-500">.</span></span>
+        <a href='/'> 
+  <span className="text-xl font-bold">E-Commerce Project <span className="text-red-500">.</span></span>
+</a>
       </div>
 
       <div className="flex items-center relative">
-        <button className="mr-4" onClick={() => setShowCart(!showCart)}>
-          {/* Replace 'cart.svg' with your actual cart icon */}
-          <img src="/cart.svg" alt="Cart" className="w-8 h-8" />
+        <button className="mr-4 bg-white border border-gray-800 rounded-xl px-2 py-0.5" onClick={() => setShowCart(!showCart)}>
+          <img src="/cart.svg" alt="Cart" className="w-12 h-10" />
           {cartItems.length > 0 && (
-            <span className="ml-1 text-red-500">{cartItems.length}</span>
+            <label className='font-bold'>Cart:(<span className="ml-1 font-bold border border-gray-200 rounded font-sans bg-transparent text-red-500">{cartItems.length}</span>)</label>
           )}
         </button>
         {/* Show cart items */}
-        {showCart && (
-          <div ref={cartRef} className="absolute bg-white rounded-lg shadow-md p-4 right-0 top-full mt-2 max-w-xs overflow-hidden">
-            <h2 className="text-lg font-semibold mb-2">Cart Items</h2>
+        {cartItems.length === 0? <>  {showCart && (<span className="ml-1 font-bold border border-gray-200 rounded  bg-white h-8  text-red-600">No items were added to the cart.</span>)}
+            </> :  <>{showCart && (
+          
+          <div ref={cartRef} className=" absolute bg-white rounded-lg shadow-md p-0 right-4 top-full mt-1 max-w-xl overflow-hidden">
+            <h2 className="text-lg text-white bg-slate-800 font-semibold mx-2 my-2">Cart Items</h2>
+            
             <table className="w-full">
+              
               <thead>
                 <tr>
-                  <th className="text-left py-2 px-4 font-semibold">Product</th>
-                  <th className="text-left py-2 px-4 font-semibold">Price</th>
-                  <th className="text-left py-2 px-4 font-semibold">Units</th>
+                  <th className="text-center py-2 px-4 font-bold" style={{ width: '35%' }}>Product</th>
+                  <th className="text-center py-2 px-4 font-bold" style={{ width: '15%' }}>Units</th>
+                  <th className="text-center py-2 px-4 font-bold" style={{ width: '25%' }}>Price</th>
+                  <th className="text-center py-2 px-4 font-bold" style={{ width: '25%', whiteSpace: 'nowrap' }}>Total Price</th>
                 </tr>
               </thead>
               <tbody>
                 {cartItems.map((item, index) => (
                   <tr key={index} className="border-b">
-                    <td className="py-2 px-4">{item.name}</td>
-                    <td className="py-2 px-4">${item.price}</td>
-                    <td className="py-2 px-4">{item.units}</td>
+                    <td className="py-2 px-4 text-gray-800 max-w-xs overflow-hidden text-left" style={{ width: '35%', whiteSpace: 'nowrap' }}>{item.name}</td>
+                    
+                    <td className="py-2 px-2 text-center " style={{ width: '15%' }}>
+                      <div className="flex items-center justify-center border border-gray-300 rounded">
+                        <button className="quantity-button  px-1.5" onClick={() => handleQuantityChange(item, item.units - 1)}>
+                          -
+                        </button>
+                        <span className="px-2 font-bold bg-gray-200">{item.units}</span>
+                        <button className="quantity-button  px-1.5" onClick={() => handleQuantityChange(item, item.units + 1)}>
+                          +
+                        </button>
+                      </div>
+                    </td>
+
+                    <td className="py-2 px-4 text-center" style={{ width: '25%' }}>${item.price}</td>
+                    <td className="py-2 text-green-500 font-bold px-4 text-right" style={{ width: '25%' }}>${updatedPrice(item)}
+                     <span>  <button className="text-red-500" onClick={() => handleDeleteItem(item)}><img src="/delete.svg" alt="Cart" className=" w-8 h-4" /></button></span></td>
+                    
                   </tr>
                 ))}
               </tbody>
             </table>
+            {/* Total Price */}
+            {cartItems.length > 0 && (
+            <div className="font-serif font-semibold text-lg text-gray-800 mb-2 mt-8 ml-2">
+              Net Total: 
+              <span className='bg-slate-800 font-sans font-bold text-green-400'>
+                ${calculateTotalPrice()}
+              </span ><div className='text-center'>
+            <button className="bg-sky-600 rounded font-bold text-xl text-white px-2 py-1.5 mb-4 mt-4 ml-2" onClick={checking}>Check Out</button>
           </div>
-        )}
-      </div>
-    </header>
-  );
-};
+            </div>
+          )}
+                      
+                    </div>
+                  )}</>}
+       
+                </div>
+              </header>
+            );
+          };
 
 export default Header;
