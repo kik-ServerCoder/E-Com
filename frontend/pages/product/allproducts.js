@@ -68,6 +68,7 @@ const Product = () => {
     });
     setCartItems(updatedCartItems);
   };
+  
   const updateCartState = (updatedCartItems) => {
     setCartItems(updatedCartItems);
   };
