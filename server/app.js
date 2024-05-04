@@ -42,6 +42,39 @@ app.post('/create-checkout-session', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while creating the checkout session' });
   }
 });
+app.post('/create-subs-session', async (req, res) => {
+  const { subscriptionType } = req.body;
+
+  let priceId;
+  if (subscriptionType === 'yearly') {
+    priceId = 'price_1PCW73SFJbKurQg9CL9iQVxQ'; // Yearly subscription
+  } else if (subscriptionType === 'monthly') {
+    priceId = 'price_1PCW4kSFJbKurQg9A00cc3mx'; // Monthly subscription
+  } else {
+    return res.status(400).json({ error: 'Invalid subscription type' });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      success_url: 'http://localhost:7501/subscribe/update/success',
+      cancel_url: 'http://localhost:7501/subscribe/update/cancel',
+    });
+
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error('Error creating Stripe session:', error);
+    res.status(500).json({ error: 'Could not create Stripe session' });
+  }
+});
+
+
 
 app.listen(3000, () => {
   console.log('Server running on port 3000');
