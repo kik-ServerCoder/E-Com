@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../custom/header";
+import Link from "next/link";
 
 const Product = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -76,8 +77,17 @@ const Product = () => {
   return (
     <div className="container mx-auto">
       <Header cartItems={cartItems} updateCartState={updateCartState} updateCartItem={updateCartItem} />
-      
-      <h1 className="text-2xl font-bold mb-4 mt-4">All Products</h1>
+      <div className="flex justify-between items-center">
+  <h1 className="text-2xl font-bold mb-4 mt-4">All Products</h1>
+  <h2>
+    <Link href="subscribe/subs">
+      <button className="bg-blue-500 text-white font-bold right-6 py-2 px-2 rounded-lg hover:bg-blue-600 transition ease-in-out duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Subscribe Now</button>
+    </Link>
+  </h2>
+
+</div>
+
+    
       {showSuccessMessage && (
         <p className="text-green-500 bg-slate-200 font-semibold text-center py-2 px-4 rounded-md">
           Product added to cart successfully!
